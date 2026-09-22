@@ -25,6 +25,26 @@
     }
   });
 
+  // untrusted sources (remote server responses) are sanitized first;
+  // only preference keys that actually changed get written
+  const configureRemote = j => {
+    const {prefs} = sanitizePrefs(j, 'remote');
+    if (Object.keys(prefs).length === 0) {
+      console.info('update from server is rejected: nothing to apply');
+      return;
+    }
+    chrome.storage.local.get(Object.keys(prefs), current => {
+      const changed = prefDiff(current, prefs);
+      if (Object.keys(changed).length) {
+        chrome.storage.local.set(changed);
+        console.info('preferences are updated from the remote server');
+      }
+      else {
+        console.info('update from server is rejected: up-to-date');
+      }
+    });
+  };
+
   const run = () => {
     chrome.storage.managed.get(null, rps => {
       rps = rps || {};
@@ -53,7 +73,7 @@
       'remote-address': ''
     }, prefs => {
       if (prefs['remote-address']) {
-        fetch(prefs['remote-address']).then(r => r.json()).then(configure).catch(e => {
+        fetch(prefs['remote-address']).then(r => r.json()).then(configureRemote).catch(e => {
           console.error('REMOTE_JSON_PARSE_ERROR', e);
         });
       }
@@ -75,7 +95,7 @@
 
   chrome.runtime.onMessage.addListener((request, sender, response) => {
     if (request.method === 'update-from-remote') {
-      fetch(request.href).then(r => r.json()).then(configure)
+      fetch(request.href).then(r => r.json()).then(configureRemote)
         .then(() => response(true)).catch(e => response(e.message));
 
       return true;

@@ -80,6 +80,7 @@ body {
     <input type="text" id="remote-address" placeholder="https://.../configuration.json">
     <button id="update" data-localize="updateFromRemote" disabled>Update from Remote Server</button>
   </div>
+  <p class="note" data-localize="remoteSanitizedNote">Updates fetched from a remote configuration server are filtered: the response can only change preference values. It cannot change the remote address itself, force updates, or write internal keys. Ignored keys are reported in the console. Managed storage (domain administrator) is not restricted.</p>
 
   <p id="backup">
     <button id="import" data-localize="importSettings">Import Settings</button>
@@ -93,6 +94,7 @@ body {
     <span id="status"></span>
   </div>
 
+  <script src="../../safeguard.js"></script>
   <script src="index.js"></script>
 </body>
 </html>

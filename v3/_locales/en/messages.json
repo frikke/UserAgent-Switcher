@@ -194,6 +194,9 @@
   "updateFromRemote": {
     "message": "Update from Remote Server"
   },
+  "remoteSanitizedNote": {
+    "message": "Updates fetched from a remote configuration server are filtered: the response can only change preference values. It cannot change the remote address itself, force updates, or write internal keys. Ignored keys are reported in the console. Managed storage (domain administrator) is not restricted."
+  },
   "popularOSs": {
     "message": "Popular Operating Systems on the Popup Interface"
   },

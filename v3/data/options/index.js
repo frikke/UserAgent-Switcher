@@ -236,9 +236,31 @@ document.getElementById('import').addEventListener('click', () => {
       const reader = new FileReader();
       reader.onloadend = event => {
         input.remove();
-        const json = JSON.parse(event.target.result);
+        let json;
+        try {
+          json = JSON.parse(event.target.result);
+        }
+        catch (e) {
+          notify('Import JSON error: ' + e.message, 5000);
+          return;
+        }
+        if (json === null || typeof json !== 'object' || Array.isArray(json)) {
+          notify('Import JSON error: expected a preference object', 5000);
+          return;
+        }
+        const {prefs} = sanitizePrefs(json, 'import');
+        if (prefs['remote-address']) {
+          const proceed = window.confirm(
+            'The imported file sets the remote configuration server to:\n\n' +
+            prefs['remote-address'] +
+            '\n\nAllow this extension to fetch preferences from it on every startup?'
+          );
+          if (!proceed) {
+            delete prefs['remote-address'];
+          }
+        }
         chrome.storage.local.clear(() => {
-          chrome.storage.local.set(json, () => {
+          chrome.storage.local.set(prefs, () => {
             window.close();
             chrome.runtime.reload();
           });

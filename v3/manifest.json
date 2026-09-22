@@ -28,7 +28,7 @@
   "background": {
     "service_worker": "worker.js",
     "scripts": [
-      "context.js", "external/ua-parser.min.js", "agent.js", "network.js", "managed.js", "worker.js"
+      "context.js", "external/ua-parser.min.js", "agent.js", "network.js", "safeguard.js", "managed.js", "worker.js"
     ]
   },
   "action": {
